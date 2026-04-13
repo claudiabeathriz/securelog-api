@@ -2,6 +2,7 @@ package com.claudia.securelog_api.services;
 
 import com.claudia.securelog_api.entities.User;
 import com.claudia.securelog_api.repositories.UserRepository;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,12 +15,18 @@ public class UserService {
     private final UserRepository userRepository;
     // dependência do repo; não muda
 
-    public UserService(UserRepository userRepository) {
+    private final BCryptPasswordEncoder passwordEncoder;
+
+    public UserService(UserRepository userRepository,
+                       BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
-    // injeção de dependência
+    // injeção de dependência + senha criptografada
 
     public User create(User user) {
+        String encryptedPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(encryptedPassword);
         return userRepository.save(user);
     }
     // no sql => INSERT INTO users (...)
