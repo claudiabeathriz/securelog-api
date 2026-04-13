@@ -47,4 +47,21 @@ public class UserService {
     // SELECT u.id, u.name, u.email, u.password
     //FROM users u
     //WHERE u.id = ?;
+
+    public User findByEmail(String email) {
+        Optional<User> user = userRepository.findByEmail(email);
+        // optional porque o user pode existir ou nao
+        return user.orElseThrow(() -> new RuntimeException("User not found"));
+        // tratamento de exceção evita que retorne null = boa prática
+    }
+
+    public User login(String email, String password) {
+        User user = findByEmail(email);
+
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new RuntimeException("Invalid credentials");
+        }
+
+        return user;
+    }
 }
