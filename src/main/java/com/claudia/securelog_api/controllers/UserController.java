@@ -1,7 +1,7 @@
 package com.claudia.securelog_api.controllers;
 
-import com.claudia.securelog_api.dtos.UserRequestDTO;
-import com.claudia.securelog_api.dtos.UserResponseDTO;
+import com.claudia.securelog_api.dto.UserRequestDTO;
+import com.claudia.securelog_api.dto.UserResponseDTO;
 import com.claudia.securelog_api.entities.User;
 import com.claudia.securelog_api.services.UserService;
 import jakarta.validation.Valid;

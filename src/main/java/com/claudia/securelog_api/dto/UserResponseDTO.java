@@ -1,4 +1,4 @@
-package com.claudia.securelog_api.dtos;
+package com.claudia.securelog_api.dto;
 
 public class UserResponseDTO {
     // resposta da API
