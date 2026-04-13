@@ -1,8 +1,10 @@
 package com.claudia.securelog_api.controllers;
 
+import com.claudia.securelog_api.dtos.UserRequestDTO;
 import com.claudia.securelog_api.dtos.UserResponseDTO;
 import com.claudia.securelog_api.entities.User;
 import com.claudia.securelog_api.services.UserService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,10 +23,18 @@ public class UserController {
     // injeção de dependencia
 
     @PostMapping
-    public UserResponseDTO create(@RequestBody User user) {
+    public UserResponseDTO create(@RequestBody @Valid UserRequestDTO dto) {
         // RB pega JSON do Postman e transforma em objeto Java
+        User user = new User(
+                null,
+                dto.getName(),
+                dto.getEmail(),
+                dto.getPassword()
+        );
+
         User savedUser = userService.create(user);
         // chama lógica do service
+
         return new UserResponseDTO(
                 savedUser.getId(),
                 savedUser.getName(),
