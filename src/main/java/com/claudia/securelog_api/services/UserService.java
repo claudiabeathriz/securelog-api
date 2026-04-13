@@ -58,6 +58,10 @@ public class UserService {
     public User login(String email, String password) {
         User user = findByEmail(email);
 
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+            throw new RuntimeException("Email already exists");
+        }
+
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new RuntimeException("Invalid credentials");
         }
