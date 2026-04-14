@@ -1,6 +1,9 @@
 package com.claudia.securelog_api.services;
 
 import com.claudia.securelog_api.entities.User;
+import com.claudia.securelog_api.exceptions.BadRequestException;
+import com.claudia.securelog_api.exceptions.ResourceNotFoundException;
+import com.claudia.securelog_api.exceptions.UnauthorizedException;
 import com.claudia.securelog_api.repositories.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,10 +25,9 @@ public class UserService {
     }
 
     public User create(User user) {
-        userRepository.findByEmail(user.getEmail())
-                .ifPresent(u -> {
-                    throw new RuntimeException("Email already exists");
-                });
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+            throw new BadRequestException("Email already exists");
+        }
 
         String encryptedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encryptedPassword);
@@ -39,19 +41,17 @@ public class UserService {
 
     public User findById(Long id) {
         Optional<User> user = userRepository.findById(id);
-        return user.orElseThrow(() -> new RuntimeException("User not found"));
-    }
+        return user.orElseThrow(() -> new ResourceNotFoundException("User not found"));}
 
     public User findByEmail(String email) {
         Optional<User> user = userRepository.findByEmail(email);
-        return user.orElseThrow(() -> new RuntimeException("User not found"));
-    }
+        return user.orElseThrow(() -> new UnauthorizedException("Invalid credentials"));}
 
     public User login(String email, String password) {
         User user = findByEmail(email);
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new RuntimeException("Invalid credentials");
+            throw new UnauthorizedException("Invalid credentials");
         }
 
         return user;
